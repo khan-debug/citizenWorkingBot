@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Bot Pakistan - AI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        textarea, input, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .user-info h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result {
+            display: none;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #27ae60;
+        }
+        
+        .result h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .explanation {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .recommendations {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .recommendations h4 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+        
+        .recommendations ul {
+            list-style: none;
+        }
+        
+        .recommendations li {
+            padding: 5px 0;
+            color: #2c3e50;
+        }
+        
+        .error {
+            background: #fdf2f2;
+            border-left-color: #e74c3c;
+            color: #e74c3c;
+        }
+        
+        .scheme-details, .document-requirements, .helpline-info, .next-actions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .scheme-card, .document-card, .helpline-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .scheme-card h5, .document-card h5, .helpline-card h5 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .scheme-links {
+            margin-top: 10px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .btn-link {
+            background: #3498db;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+        }
+        
+        .btn-link:hover {
+            background: #2980b9;
+        }
+        
+        .helpline {
+            background: #27ae60;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+        
+        .phone-link {
+            color: #27ae60;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .phone-link:hover {
+            text-decoration: underline;
+        }
+        
+        .helpline-type {
+            background: #e74c3c;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .document-requirements ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        
+        .document-requirements li {
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .next-actions {
+            background: #e8f5e8;
+            border-left: 5px solid #27ae60;
+        }
+        
+        .next-actions h4 {
+            color: #27ae60;
+        }
+        
+        .next-actions ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .next-actions li {
+            padding: 8px 0;
+            color: #2c3e50;
+            border-bottom: 1px solid #d5e8d5;
+        }
+        
+        .next-actions li:last-child {
+            border-bottom: none;
+        }
+        
+        .forward-query-section {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid #ffc107;
+            text-align: center;
+        }
+        
+        .forward-query-section h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .forward-query-section p {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        
+        .forward-btn {
+            background: #ffc107;
+            color: #856404;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .forward-btn:hover {
+            background: #e0a800;
+        }
+        
+        .query-forwarded {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+        
+        .nav-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .nav-links a {
+            color: #3498db;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🇵🇰 Citizen Bot Pakistan</h1>
+            <p>AI-Powered Government Services Assistant</p>
+        </div>
+        
+        <div class="main-content">
+            <form id="issueForm">
+                <div class="form-group">
+                    <label for="issue">Describe Your Issue or Question:</label>
+                    <textarea 
+                        id="issue" 
+                        name="issue" 
+                        placeholder="Example: I need help with my children's education expenses. My monthly income is 25,000 and I have 3 children..."
+                        required
+                    ></textarea>
+                </div>
+                
+                <div class="user-info">
+                    <h3>📋 Additional Information (Optional)</h3>
+                    <p style="color: #7f8c8d; margin-bottom: 15px;">Providing this information helps us give you more accurate assistance.</p>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="monthlyIncome">Monthly Income (PKR):</label>
+                            <input type="number" id="monthlyIncome" name="monthlyIncome" placeholder="e.g., 25000">
+                        </div>
+                        <div class="form-group">
+                            <label for="familySize">Family Size:</label>
+                            <input type="number" id="familySize" name="familySize" placeholder="e.g., 4">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="location">Location:</label>
+                            <select id="location" name="location">
+                                <option value="">Select Location</option>
+                                <option value="Karachi">Karachi</option>
+                                <option value="Lahore">Lahore</option>
+                                <option value="Islamabad">Islamabad</option>
+                                <option value="Rawalpindi">Rawalpindi</option>
+                                <option value="Faisalabad">Faisalabad</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="issueType">Issue Type:</label>
+                            <select id="issueType" name="issueType">
+                                <option value="">Select Type</option>
+                                <option value="education">Education</option>
+                                <option value="housing">Housing</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="employment">Employment</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    🤖 Get AI Assistance
+                </button>
+            </form>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Our AI agents are analyzing your issue...</p>
+            </div>
+            
+            <div class="result" id="result">
+                <h3>🎯 AI Analysis & Recommendations</h3>
+                <div id="resultContent"></div>
+            </div>
+            
+            <div class="nav-links">
+                <a href="/help">📖 Help</a>
+                <a href="/about">ℹ️ About</a>
+                <a href="/api/schemes">📋 Available Schemes</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('issueForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const resultContent = document.getElementById('resultContent');
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            
+            // Collect form data
+            const formData = {
+                issue: document.getElementById('issue').value,
+                user_info: {
+                    monthly_income: parseInt(document.getElementById('monthlyIncome').value) || 0,
+                    family_size: parseInt(document.getElementById('familySize').value) || 0,
+                    location: document.getElementById('location').value,
+                    issue_type: document.getElementById('issueType').value
+                }
+            };
+            
+            try {
+                const response = await fetch('/submit-issue', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Display successful result
+                    let content = `
+                        <div class="explanation">
+                            <h4>📝 Explanation:</h4>
+                            <p>${data.explanation.replace(/\n/g, '<br>')}</p>
+                        </div>
+                    `;
+                    
+                    // Add scheme details if available
+                    if (data.scheme_details && data.scheme_details.length > 0) {
+                        content += `
+                            <div class="scheme-details">
+                                <h4>📋 Available Schemes:</h4>
+                                ${data.scheme_details.map(scheme => `
+                                    <div class="scheme-card">
+                                        <h5>${scheme.name}</h5>
+                                        <p><strong>Category:</strong> ${scheme.category}</p>
+                                        <p><strong>Description:</strong> ${scheme.description}</p>
+                                        <p><strong>Benefits:</strong> ${scheme.benefits}</p>
+                                        <p><strong>Application Process:</strong> ${scheme.application_process}</p>
+                                        <div class="scheme-links">
+                                            ${scheme.website ? `<a href="${scheme.website}" target="_blank" class="btn-link">🌐 Visit Website</a>` : ''}
+                                            ${scheme.helpline ? `<span class="helpline">📞 ${scheme.helpline}</span>` : ''}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+                    
+                    // Add document requirements if available
+                    if (data.document_requirements && data.document_requirements.length > 0) {
+                        content += `
+                            <div class="document-requirements">
+                                <h4>📄 Required Documents:</h4>
+                                ${data.document_requirements.map(req => `
+                                    <div class="document-card">
+                                        <h5>${req.scheme}</h5>
+                                        <p>${req.message}</p>
+                                        <ul>
+                                            ${req.documents.map(doc => `<li>${doc}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+                    
+                    // Add helpline information
+                    if (data.helpline_info && data.helpline_info.helplines && data.helpline_info.helplines.length > 0) {
+                        content += `
+                            <div class="helpline-info">
+                                <h4>📞 Helpline Information:</h4>
+                                <p>${data.helpline_info.message}</p>
+                                ${data.helpline_info.helplines.map(helpline => `
+                                    <div class="helpline-card">
+                                        <h5>${helpline.name}</h5>
+                                        <p><strong>Phone:</strong> <a href="tel:${helpline.number}" class="phone-link">${helpline.number}</a></p>
+                                        ${helpline.website ? `<p><strong>Website:</strong> <a href="${helpline.website}" target="_blank" class="btn-link">${helpline.website}</a></p>` : ''}
+                                        <span class="helpline-type">${helpline.type.replace('_', ' ').toUpperCase()}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+                    
+                    // Add recommendations
+                    if (data.recommendations && data.recommendations.length > 0) {
+                        content += `
+                            <div class="recommendations">
+                                <h4>💡 Recommendations:</h4>
+                                <ul>
+                                    ${data.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                    }
+                    
+                    // Add next actions
+                    if (data.next_actions && data.next_actions.length > 0) {
+                        content += `
+                            <div class="next-actions">
+                                <h4>🎯 Next Steps:</h4>
+                                <ul>
+                                    ${data.next_actions.map(action => `<li>${action}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                    }
+                    
+                    // Add forward query section
+                    content += `
+                        <div class="forward-query-section">
+                            <h4>📤 Need More Help?</h4>
+                            <p>If you need additional assistance or have specific questions, we can forward your query to the relevant department.</p>
+                            <button class="forward-btn" onclick="forwardQuery()">📤 Forward My Query</button>
+                        </div>
+                    `;
+                    
+                    resultContent.innerHTML = content;
+                    result.className = 'result';
+                } else {
+                    // Display error
+                    resultContent.innerHTML = `
+                        <div class="explanation">
+                            <h4>❌ Error:</h4>
+                            <p>${data.message}</p>
+                        </div>
+                    `;
+                    result.className = 'result error';
+                }
+                
+                result.style.display = 'block';
+                
+            } catch (error) {
+                resultContent.innerHTML = `
+                    <div class="explanation">
+                        <h4>❌ Error:</h4>
+                        <p>Something went wrong. Please try again later.</p>
+                    </div>
+                `;
+                result.className = 'result error';
+                result.style.display = 'block';
+            }
+            
+            // Reset button state
+            submitBtn.disabled = false;
+            submitBtn.textContent = '🤖 Get AI Assistance';
+            loading.style.display = 'none';
+        });
+        
+        // Function to forward user query
+        async function forwardQuery() {
+            const issue = document.getElementById('issue').value;
+            const userInfo = {
+                monthly_income: parseInt(document.getElementById('monthlyIncome').value) || 0,
+                family_size: parseInt(document.getElementById('familySize').value) || 0,
+                location: document.getElementById('location').value,
+                issue_type: document.getElementById('issueType').value
+            };
+            
+            if (!issue.trim()) {
+                alert('Please describe your issue first.');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/forward-query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        issue: issue,
+                        user_info: userInfo
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Update the forward query section with success message
+                    const forwardSection = document.querySelector('.forward-query-section');
+                    if (forwardSection) {
+                        forwardSection.innerHTML = `
+                            <h4>✅ Query Forwarded Successfully!</h4>
+                            <p><strong>Reference Number:</strong> ${data.reference_number}</p>
+                            <p><strong>Department:</strong> ${data.department}</p>
+                            <p><strong>Estimated Response Time:</strong> ${data.estimated_response_time}</p>
+                            <p><strong>Helpline:</strong> <a href="tel:${data.helpline}" class="phone-link">${data.helpline}</a></p>
+                            <div class="next-steps">
+                                <h5>Next Steps:</h5>
+                                <ul>
+                                    ${data.next_steps.map(step => `<li>${step}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                        forwardSection.className = 'forward-query-section query-forwarded';
+                    }
+                } else {
+                    alert('Error forwarding query: ' + data.message);
+                }
+            } catch (error) {
+                alert('Something went wrong while forwarding your query. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

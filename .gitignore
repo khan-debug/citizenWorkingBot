@@ -1,0 +1,9 @@
+# Ignore Python artifacts
+__pycache__/
+*.pyc
+
+# Ignore virtual environment folder
+venv/
+
+# Ignore secrets and credentials
+service-account-key.json

@@ -1,0 +1,35 @@
+{
+  "education_schemes": [
+    {
+      "name": "Test Education Grant",
+      "min_children": 1,
+      "max_monthly_income": 50000,
+      "description": "Test education grant for demonstration purposes",
+      "benefits": "Monthly stipend of PKR 1,000 per child",
+      "required_documents": [
+        "CNIC",
+        "Children's birth certificates",
+        "Income certificate"
+      ],
+      "application_process": "Apply online through test portal",
+      "helpline": "0800-TEST-01",
+      "website": "https://test-education.gov.pk"
+    }
+  ],
+  "healthcare_schemes": [
+    {
+      "name": "Test Health Card",
+      "income_limit": 60000,
+      "description": "Test health card for demonstration purposes",
+      "benefits": "Free treatment at test hospitals",
+      "required_documents": [
+        "CNIC",
+        "Income certificate",
+        "Recent photograph"
+      ],
+      "application_process": "Apply at test health centers",
+      "helpline": "0800-TEST-02",
+      "website": "https://test-health.gov.pk"
+    }
+  ]
+}
